@@ -1,0 +1,33 @@
+import React, { useState } from 'react';
+
+const Card = ({ front, back, image }) => {
+    const [isFlipped, setIsFlipped] = useState(false);
+
+    const handleClick = () => {
+        setIsFlipped(!isFlipped);
+    };
+
+    return (
+        <div 
+            className={`card ${isFlipped ? 'flipped' : ''}`} 
+            onClick={handleClick}
+        >
+            <div className="card-inner">
+                <div className="card-front">
+                    <div className="card-content">
+                        <img src={image} alt={front} className="card-image" />
+                        <p className="card-text">{front}</p>
+                    </div>
+                </div>
+                <div className="card-back">
+                    <div className="card-content">
+                        <img src={image} alt={back} className="card-image" />
+                        <p className="card-text">{back}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Card;
