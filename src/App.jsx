@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Card from './components/Card';
 import './App.css';
 
 const App = () => {
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
-    const [usedIndices, setUsedIndices] = useState(new Set());
-    
+    const [guess, setGuess] = useState('');
+    const [feedback, setFeedback] = useState('');
+    const [isFlipped, setIsFlipped] = useState(false);
+    const [hasGuessed, setHasGuessed] = useState(false);
+
     const cardSet = {
         title: "World Geography Quiz",
         description: "Test your knowledge of world geography with these interesting facts!",
@@ -63,19 +66,46 @@ const App = () => {
         ]
     };
 
-    const handleNextCard = () => {
-        setUsedIndices(prev => new Set([...prev, currentCardIndex]));
+    const handleGuessChange = (e) => {
+        setGuess(e.target.value);
+    };
 
-        if (usedIndices.size === cardSet.cards.length - 1) {
-            setUsedIndices(new Set());
+    const handleGuessSubmit = (e) => {
+        e.preventDefault();
+        setHasGuessed(true);
+        const answer = cardSet.cards[currentCardIndex].back.trim().toLowerCase();
+        if (guess.trim().toLowerCase() === answer) {
+            setFeedback('Correct!');
+            setIsFlipped(true);
+        } else {
+            setFeedback('Incorrect. Try again or view the answer.');
         }
+    };
 
-        const availableIndices = cardSet.cards
-            .map((_, index) => index)
-            .filter(index => !usedIndices.has(index));
+    const handleFlip = () => {
+        if (hasGuessed) {
+            setIsFlipped(!isFlipped);
+        }
+    };
 
-        const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-        setCurrentCardIndex(randomIndex);
+    const handleNextCard = () => {
+        if (currentCardIndex < cardSet.cards.length - 1) {
+            setCurrentCardIndex(currentCardIndex + 1);
+            setGuess('');
+            setFeedback('');
+            setIsFlipped(false);
+            setHasGuessed(false);
+        }
+    };
+
+    const handlePrevCard = () => {
+        if (currentCardIndex > 0) {
+            setCurrentCardIndex(currentCardIndex - 1);
+            setGuess('');
+            setFeedback('');
+            setIsFlipped(false);
+            setHasGuessed(false);
+        }
     };
 
     return (
@@ -84,19 +114,51 @@ const App = () => {
                 <h1>{cardSet.title}</h1>
                 <p>{cardSet.description}</p>
                 <div className="card-counter">
-                    Card {usedIndices.size + 1} of {cardSet.cards.length}
+                    Card {currentCardIndex + 1} of {cardSet.cards.length}
                 </div>
             </header>
-            
             <main>
-                <Card 
+                <Card
                     front={cardSet.cards[currentCardIndex].front}
                     back={cardSet.cards[currentCardIndex].back}
                     image={cardSet.cards[currentCardIndex].image}
+                    isFlipped={isFlipped}
+                    onFlip={hasGuessed ? handleFlip : undefined}
+                    feedback={feedback}
                 />
-                <button onClick={handleNextCard} className="next-button">
-                    Next Question
-                </button>
+                <form className="guess-form" onSubmit={handleGuessSubmit}>
+                    <label htmlFor="guess-input">Your Guess:</label>
+                    <input
+                        id="guess-input"
+                        type="text"
+                        value={guess}
+                        onChange={handleGuessChange}
+                        disabled={isFlipped}
+                        autoComplete="off"
+                    />
+                    <button type="submit" disabled={isFlipped || !guess.trim()}>
+                        Submit
+                    </button>
+                </form>
+                {feedback && (
+                    <div className={`feedback ${feedback === 'Correct!' ? 'correct' : 'incorrect'}`}>{feedback}</div>
+                )}
+                <div className="navigation-buttons">
+                    <button
+                        onClick={handlePrevCard}
+                        disabled={currentCardIndex === 0}
+                        className={currentCardIndex === 0 ? 'nav-disabled' : ''}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        onClick={handleNextCard}
+                        disabled={currentCardIndex === cardSet.cards.length - 1}
+                        className={currentCardIndex === cardSet.cards.length - 1 ? 'nav-disabled' : ''}
+                    >
+                        Next
+                    </button>
+                </div>
             </main>
         </div>
     );

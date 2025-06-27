@@ -1,16 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Card = ({ front, back, image }) => {
-    const [isFlipped, setIsFlipped] = useState(false);
-
-    const handleClick = () => {
-        setIsFlipped(!isFlipped);
-    };
-
+const Card = ({ front, back, image, isFlipped, onFlip, feedback }) => {
     return (
         <div 
             className={`card ${isFlipped ? 'flipped' : ''}`} 
-            onClick={handleClick}
+            onClick={onFlip}
+            style={{ cursor: onFlip ? 'pointer' : 'default' }}
         >
             <div className="card-inner">
                 <div className="card-front">
