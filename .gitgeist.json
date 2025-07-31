@@ -1,0 +1,33 @@
+{
+  "auto_commit": true,
+  "commit_style": "conventional",
+  "llm_model": "llama3.2",
+  "llm_host": "http://localhost:11434",
+  "temperature": 0.3,
+  "watch_paths": [
+    "."
+  ],
+  "ignore_patterns": [
+    ".git/*",
+    "node_modules/*",
+    "*.pyc",
+    "__pycache__/*",
+    "data/logs/*",
+    "*.log",
+    ".env",
+    "venv/*",
+    ".venv/*"
+  ],
+  "supported_languages": [
+    "python",
+    "javascript",
+    "typescript",
+    "rust",
+    "go"
+  ],
+  "autonomous_mode": true,
+  "require_confirmation": true,
+  "max_commit_frequency": 300,
+  "data_dir": "data",
+  "log_file": "data/logs/gitgeist.log"
+}
